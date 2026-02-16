@@ -1,7 +1,4 @@
 #include <FEH.h>
-#include <FEHIO.h>
-#include <FEHServo.h>
-#include <FEHLCD.h>
 #include <Arduino.h>
 
 
@@ -13,9 +10,8 @@
 
 void ERCMain()
 {
+    // Your code here!
 
-
-    
     FEHMotor rightDrive(FEHMotor::Motor0, 9.0);
     FEHMotor leftDrive(FEHMotor::Motor1, 9.0);
     DigitalInputPin backLeftBumper(FEHIO::Pin8);
@@ -24,13 +20,13 @@ void ERCMain()
     DigitalInputPin frontRightBumper(FEHIO::Pin3);
 
 
-    
+   
     //Wait for input
     while(backLeftBumper.Value());
 
     Sleep(1);
 
-    rightDrive.SetPercent(-25);
+    rightDrive.SetPercent(25);
     leftDrive.SetPercent(25);
 
     //Wait for front bumpers to get hit
@@ -38,19 +34,24 @@ void ERCMain()
 
     //Turn right
     leftDrive.SetPercent(0);
-    rightDrive.SetPercent(25);
+    rightDrive.SetPercent(-25);
 
     //Wait for back bumper to hit wal
-    while(backLeftBumper.Value() || backRightBumper.Value());
+    while(backRightBumper.Value());
 
     leftDrive.SetPercent(0);
     rightDrive.SetPercent(0);
 
     Sleep(1);
 
+    leftDrive.SetPercent(-25);
+    rightDrive.SetPercent(0);
+
+    while(backLeftBumper.Value())
+
     //Drive forward
     leftDrive.SetPercent(25);
-    rightDrive.SetPercent(-25);
+    rightDrive.SetPercent(25);
 
     //PART 2
 
@@ -62,9 +63,9 @@ void ERCMain()
     rightDrive.SetPercent(0);
     Sleep(0.5);
 
-    //Turn left
-    leftDrive.SetPercent(0);
-    rightDrive.SetPercent(25);
+    //Turn back left
+    leftDrive.SetPercent(-25);
+    rightDrive.SetPercent(0);
 
     //Wait for back bumper to hit wal
     while(backLeftBumper.Value());
@@ -74,8 +75,8 @@ void ERCMain()
     rightDrive.SetPercent(0);
     Sleep(0.5);
 
-    leftDrive.SetPercent(-25);
-    rightDrive.SetPercent(0);
+    leftDrive.SetPercent(0);
+    rightDrive.SetPercent(-25);
 
     while(backRightBumper.Value());
 
@@ -84,8 +85,9 @@ void ERCMain()
     rightDrive.SetPercent(0);
     Sleep(0.5);
 
+    //forward
     rightDrive.SetPercent(25);
-    leftDrive.SetPercent(-25);
+    leftDrive.SetPercent(25);
 
     //Wait for front bumpers to get hit
     while(frontLeftBumper.Value() || frontRightBumper.Value());
@@ -96,8 +98,8 @@ void ERCMain()
 
 
     leftDrive.SetPercent(-25);
-    rightDrive.SetPercent(25);
-    
+    rightDrive.SetPercent(-25);
+   
     Sleep(1.0);
 
     leftDrive.SetPercent(0);
@@ -105,9 +107,6 @@ void ERCMain()
 
     Sleep(1.0);
     leftDrive.SetPercent(25);
-    rightDrive.SetPercent(25);
-
-
-
+    rightDrive.SetPercent(-25);
 
 }
