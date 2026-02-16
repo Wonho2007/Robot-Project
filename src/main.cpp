@@ -24,7 +24,7 @@ void ERCMain()
     //Wait for input
     while(backLeftBumper.Value());
 
-    Sleep(1);
+    Sleep(1.);
 
     rightDrive.SetPercent(25);
     leftDrive.SetPercent(25);
@@ -42,12 +42,12 @@ void ERCMain()
     leftDrive.SetPercent(0);
     rightDrive.SetPercent(0);
 
-    Sleep(1);
+    Sleep(1.);
 
     leftDrive.SetPercent(-25);
     rightDrive.SetPercent(0);
 
-    while(backLeftBumper.Value())
+    while(backLeftBumper.Value());
 
     //Drive forward
     leftDrive.SetPercent(25);
