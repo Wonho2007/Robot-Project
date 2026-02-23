@@ -1,26 +1,136 @@
-#include <FEH.h>
-#include <Arduino.h>
+#include <FEHLCD.h>
+#include <FEHIO.h>
+#include <FEHUtility.h>
+#include <FEHMotor.h>
 
-// Declare things like Motors, Servos, etc. here
-// For example:
-// FEHMotor leftMotor(FEHMotor::Motor0, 6.0);
-// FEHServo servo(FEHServo::Servo0);
+// Declarations for encoders & motors
+DigitalEncoder right_encoder(FEHIO::Pin8);
+DigitalEncoder left_encoder(FEHIO::Pin9);
+FEHMotor right_motor(FEHMotor::Motor0, 9.0);
+FEHMotor left_motor(FEHMotor::Motor1, 9.0);
 
-void explorationOne();
-void explorationTwo();
-enum LineStates
+enum
 {
     MIDDLE,
-    RIGHT,
-    LEFT
+    LEFT,
+    RIGHT
 };
+
+void move_forward(int percent, int counts) // using encoders
+{
+    // Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(-percent);
+
+    // While the average of the left and right encoder is less than counts,
+    // keep running motors
+    while ((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts)
+        ;
+
+    // Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+void turn_right(int percent, int counts) // using encoders
+
+{
+
+    // Reset encoder counts
+
+    right_encoder.ResetCounts();
+
+    left_encoder.ResetCounts();
+
+    // Set both motors to desired percent
+    right_motor.SetPercent(-percent);
+    left_motor.SetPercent(-percent);
+    // hint: set right motor backwards, left motor forwards
+
+    //<ADD CODE HERE>
+
+    // While the average of the left and right encoder is less than counts,
+    while ((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts)
+        ;
+    // keep running motors
+
+    //<ADD CODE HERE>
+
+    // Turn off motors
+
+    right_motor.Stop();
+
+    left_motor.Stop();
+}
+
+void turn_left(int percent, int counts) // using encoders
+
+{
+
+    // Reset encoder counts
+
+    right_encoder.ResetCounts();
+
+    left_encoder.ResetCounts();
+
+    // Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(percent);
+    // hint: set right motor backwards, left motor forwards
+
+    //<ADD CODE HERE>
+
+    // While the average of the left and right encoder is less than counts,
+    while ((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts)
+        ;
+    // keep running motors
+
+    //<ADD CODE HERE>
+
+    // Turn off motors
+
+    right_motor.Stop();
+
+    left_motor.Stop();
+}
 
 void ERCMain()
 {
+    int motor_percent = 25;             // Input power level here
+    int expected_counts_fourteen = 567; // Input theoretical counts here
+    int expected_counts_ten = 405;
+    int expected_counts_four = 162;
+    int expected_counts_right_turn = 239;
+    int expected_counts_left_turn = 239;
 
-    // Your code here!
+    int x, y; // for touch screen
 
-    explorationTwo();
+    // Initialize the screen
+    LCD.Clear(BLACK);
+    LCD.SetFontColor(WHITE);
+
+    LCD.WriteLine("Shaft Encoder Exploration Test");
+    LCD.WriteLine("Touch the screen");
+    while (!LCD.Touch(&x, &y))
+        ; // Wait for screen to be pressed
+    while (LCD.Touch(&x, &y))
+        ; // Wait for screen to be unpressed
+
+    move_forward(motor_percent, expected_counts_fourteen);
+    Sleep(2.0);
+    turn_left(motor_percent, expected_counts_left_turn);
+    Sleep(2.0);
+    move_forward(motor_percent, expected_counts_ten);
+    Sleep(2.0);
+    turn_right(motor_percent, expected_counts_right_turn);
+    Sleep(2.0);
+    move_forward(motor_percent, expected_counts_four);
+
+    Sleep(2.0); // Wait for counts to stabilize
 }
 
 void lineFolowing()
@@ -28,14 +138,15 @@ void lineFolowing()
 
     FEHMotor rightDrive(FEHMotor::Motor0, 9.0);
     FEHMotor leftDrive(FEHMotor::Motor1, 9.0);
-    DigitalInputPin backRightBumper (FEHIO::Pin0);
+    DigitalInputPin backRightBumper(FEHIO::Pin0);
     AnalogInputPin rightOpt(FEHIO::Pin8);
     AnalogInputPin middleOpt(FEHIO::Pin9);
     AnalogInputPin leftOpt(FEHIO::Pin10);
 
     int state = MIDDLE;
 
-    while(backRightBumper.Value());
+    while (backRightBumper.Value())
+        ;
 
     while (true)
     { // I will follow this line forever!
@@ -104,11 +215,6 @@ void lineFolowing()
         // Sleep a bit
     }
 }
-
-
-
-
-
 
 void explorationOne()
 {
